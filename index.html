@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>LMS:p-didakt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+
+<body class="section">
+
+	<aside class="menu">
+	 	<p class="menu-label">
+	    	E-Learnings
+	  	</p>
+		<ul class="menu-list">
+		    <li><a href="./course_1">Captivate Dummy</a></li>
+		    <li><a href="./course_2">Storyline Dummy</a></li>
+		    <li><a href="./course_3">iSpring Dummy</a></li>
+		</ul>
+		<p class="menu-label">
+		    Admin
+		</p>
+	  	<ul class="menu-list">
+	    	<li><a href="./admin" id="reporting">Reporting</a></li>
+	  	</ul>
+	</aside>
+
+</body>
+
+<script>
+    	
+    	var reportingButton = document.querySelector("#reporting")
+
+    	reportingButton.addEventListener("click",toReporting,false)
+
+    	function toReporting(){
+    		
+    		window.location.href = "./admin";
+    		history.replaceState(null, null, oldhref)
+    	}
+</script>
+
+
+<script>
+
+// You can use XAPIWrapper to query only particular statements from the database
+// You first create a search object using ADL.XAPIWrapper.searchParams()
+// You can add any property to the newly created search object that corresponds to a query paramenter here https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Communication.md and a value, which will limit the number of xapi statements you get in return
+
+
+// const search = ADL.XAPIWrapper.searchParams();
+// search['since'] = "2017-12-11T13:29:27.390Z";
+// var res = ADL.XAPIWrapper.getStatements(search);
+
+</script>
+
+</html>
+
+
+
+
+

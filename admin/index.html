@@ -1,0 +1,110 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+
+</head>
+
+<body class="section">
+    <h3 class="title is-1">Admin Login</h3>
+    <br>
+    <br>
+	<div id="columns">
+		<div class="column is-one-third">
+		    <div class="field">
+		        <label class="label">Email</label>
+		        <div class="control">
+		            <input class="input" id="email" type="email" placeholder="e.g alexsmith@gmail.com">
+		        </div>
+		    </div>
+		    <div class="field">
+		        <label class="label">Password</label>
+		        <div class="control">
+		            <input class="input" id="password" type="password" placeholder="*********">
+		        </div>
+		    </div>
+		    <div class="field">
+			    <div class="control">
+			        <button class="button is-primary" onclick="submitHandler()">Admin Login</button>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<br>
+	<h3 class="title is-3">Use For Testing</h3>
+
+	<div class="content columns">
+		<div id="column is-one-third">
+			<table>
+    			<thead>
+					<tr>
+						<th>Email</th>
+						<th>Password</th>
+					</tr>
+    			</thead>
+    			<tbody>
+					<tr>
+						<td>admin@p-didakt.com</td>
+						<td>hardPassword</td>
+					</tr>
+    			</tbody>
+  			</table>
+		</div>
+	</div>
+</body>
+
+
+    <script>
+    
+
+    function credentialCheck(users, userName, password) {
+
+        const onlyUser = users[0]
+
+        if (onlyUser.userName === userName && onlyUser.password === password)
+            sendToDashboard()
+                
+        else alert("sorry, not in database!!")
+    }
+
+  
+    function sendToDashboard() {
+
+        location.href = "./dashboard.html";
+    }
+
+
+
+    function submitHandler() {
+     
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        const form = {
+        	"email" : email,
+        	"password" : password
+        }
+
+
+     
+
+        fetch("/admin", {
+        	method:'POST',
+        	body:JSON.stringify(form),
+        	headers:{
+        		"Content-Type": "application/json"
+        	}
+        }).then((res)=>{
+        	if(res.status===200) window.location = "admin/dashboard"
+            else console.log("sorry, not allowed")
+        })
+
+        
+    }
+    </script>
+
+
+</html>

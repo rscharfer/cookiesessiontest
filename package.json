@@ -1,0 +1,28 @@
+{
+  "name": "mimilms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "cookie-session": "^2.0.0-beta.3",
+    "express": "^4.16.2",
+    "fs": "^0.0.1-security",
+    "multer": "^1.3.0",
+    "node-fetch": "^1.7.3",
+    "nodemon": "^1.14.11",
+    "path": "^0.12.7",
+    "pug": "^2.0.0-rc.4",
+    "randomstring": "^1.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.eu-west-1.amazonaws.com/v1/repos/MiniLMS"
+  },
+  "author": "",
+  "license": "ISC"
+}

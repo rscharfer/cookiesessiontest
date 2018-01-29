@@ -1,0 +1,227 @@
+<html>
+<head>
+	<title>Reporting</title>
+	<link rel='stylesheet' href='../css/nv.d3.css'></link>
+
+	<script type="text/javascript" src="../js/d3.v3.js" charset="utf-8"></script>
+
+	<script type="text/javascript" src="../js/nv.d3.js"></script>
+
+	<script type="text/javascript" src="../js/xapiwrapper.min.js"></script>
+
+	<script type="text/javascript" src="../js/chart.js"></script>
+
+	<script type="text/javascript" src="../js/dashboard.js"></script>
+
+	<script type="text/javascript" src="../js/xapicollection.js"></script>
+
+	<script type="text/javascript" src="../js/moment.js"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+
+</head>
+
+<style>
+	
+
+	.container {
+		display: flex;
+		justify-content:space-between;
+	}
+</style>
+<body>
+	<div class="container">
+		<div>
+			<h3 class="title is-3">CADCAM</h3>
+			<div id="cadcam"></div>
+		</div>
+		<div>
+			<h3 class="title is-3">Lufthansa</h3>
+			<div id="lufthansa"></div>
+		</div>
+		<div>		
+			<h3 class="title is-3">Extended IPU</h3>
+			<div id="extended"></div>
+		</div>
+	</div>
+
+
+
+
+	<script type="text/javascript">
+		
+		var conf = {
+        "endpoint": "http://54.76.101.118/data/xAPI/",
+        "user": "c2f8004690e97cb921bad2d07e17f9e184bef755",
+        "password": "5ed15ea8b808695262724217e989e7e169533f94"
+		};
+    	
+    	ADL.XAPIWrapper.changeConfig(conf)
+
+    	var ret = ADL.XAPIWrapper.getStatements();
+
+      	var dash_CADCAM = new ADL.XAPIDashboard();
+
+      	var dash_Lufthansa = new ADL.XAPIDashboard();
+
+      	var dash_ExtendedIPU = new ADL.XAPIDashboard();
+
+		var eLearnings = ["Extended IPU", "Lufthansa Tool Vergleich", "CAD/CAM For Service Techniker"]
+
+		var StundentAndBasicSCORMDataCreator = function(name,passed,completed,duration){
+
+			this.name = name;
+			this.passed = passed;
+			this.completed = completed;
+			this.duration = duration;
+		}
+
+		var graphData = {};
+
+
+		eLearnings.forEach(eLearning => {
+
+			graphData[eLearning] = {};
+
+			graphData[eLearning]["who_initialized"] = new ADL.Collection(ret.statements)
+									.where('object.definition.name.en-US = "'+ eLearning +'" and verb.display.en-US = "initialized"')
+									.groupBy('actor.name')
+									.select('group as name')
+									.contents
+			graphData[eLearning]["who_completed"] = new ADL.Collection(ret.statements)
+									.where('object.definition.name.en-US = "'+ eLearning +'" and verb.display.en-US = "completed"')
+
+									.groupBy('actor.name')
+									.select('group as name')
+									.contents
+
+			graphData[eLearning]["who_passed"] = new ADL.Collection(ret.statements)
+									.where('object.definition.name.en-US = "'+ eLearning +'" and verb.display.en-US = "passed"')
+									// // .select('actor.name as name, object.definition.name.en-US as eLearning')
+									.groupBy('actor.name')
+									.select('group as name')
+									.contents
+
+			graphData[eLearning]["who_duration"] = new ADL.Collection(ret.statements)
+									.where('object.definition.name.en-US = "'+ eLearning +'" and verb.display.en-US = "terminated"')
+									// // .select('actor.name as name, object.definition.name.en-US as eLearning')
+									.groupBy('actor.name')
+
+									.contents.map(student=>{
+
+										var seconds = student.data.map(x=>{
+												const iso = x.result.duration
+												const converted = moment.duration(iso, moment.ISO_8601).asSeconds();
+												return converted
+											}).reduce((a, b) => a + b, 0)
+
+										return {
+											name:student.group,
+											duration: moment.utc(seconds*1000).format("HH:mm:ss")
+										}
+									})
+
+			graphData[eLearning]["drawing_data"] = []
+
+
+
+		})
+
+
+		function fillDrawingData(){
+
+			eLearnings.forEach(eLearning=>{
+				addStudentObjects(graphData[eLearning]["who_initialized"], graphData[eLearning]["drawing_data"])
+				updateCompletedProperty(graphData[eLearning]["who_completed"], graphData[eLearning]["drawing_data"])
+				updatePassedProperty(graphData[eLearning]["who_passed"], graphData[eLearning]["drawing_data"])
+				updateDurationProperty(graphData[eLearning]["who_duration"], graphData[eLearning]["drawing_data"])
+			})
+		}
+
+
+
+		function addStudentObjects(students,all_data){
+
+			students.forEach(student=>{
+				const studentObject = new StundentAndBasicSCORMDataCreator(student.name,false,false,0)
+				all_data.push(studentObject)
+			})
+		}
+
+		function updateCompletedProperty(students,all_data){
+
+			students.forEach(student=>{
+				all_data.forEach((student_object, index)=>{
+					if (student_object.name === student.name) all_data[index]["completed"] = true;
+					})
+			})
+		}
+
+		function updatePassedProperty(students,all_data){
+
+			students.forEach(student=>{
+				all_data.forEach((student_object, index)=>{
+					if (student_object.name === student.name) all_data[index]["passed"] = true;
+					})
+			})
+		}
+
+		function updateDurationProperty(students,all_data){
+
+			students.forEach(student=>{
+				all_data.forEach((student_object, index)=>{
+					if (student_object.name === student.name) all_data[index]["duration"] = student["duration"];
+					})
+			})
+		}
+
+
+
+		fillDrawingData()
+
+		
+				
+
+		
+		dash_CADCAM.addStatements(graphData["CAD/CAM For Service Techniker"]["drawing_data"]);
+		dash_Lufthansa.addStatements(graphData["Lufthansa Tool Vergleich"]["drawing_data"]);
+		dash_ExtendedIPU.addStatements(graphData["Extended IPU"]["drawing_data"]);
+		
+
+		var CADCAM_table = dash_CADCAM.createTable({
+				container: '#cadcam',
+				groupBy: 'name',
+				aggregate:ADL.multiAggregate(ADL.select('passed'), ADL.select('completed'), ADL.select('duration'))
+
+		});
+
+		var Lufthansa_table = dash_Lufthansa.createTable({
+				container: '#lufthansa',
+				groupBy: 'name',
+				aggregate:ADL.multiAggregate(ADL.select('passed'), ADL.select('completed'), ADL.select('duration'))
+		});
+
+		var Extended_table = dash_ExtendedIPU.createTable({
+				container: '#extended',
+				groupBy: 'name',
+				aggregate:ADL.multiAggregate(ADL.select('passed'), ADL.select('completed'), ADL.select('duration'))
+		});			
+
+
+	
+
+		CADCAM_table.draw()
+		Lufthansa_table.draw()
+		Extended_table.draw()
+
+
+		document.querySelectorAll("table").forEach(table=>{
+
+			table.classList="table"
+		})
+
+		
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Storyline Dummy</title>
+	   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+
+</head>
+<body class="section">
+	<h3 class="title is-1">Storyline Dummy Login</h3>
+	<br>
+	<br>
+	<div id="columns">
+		<div class="column is-one-third">
+		    <div class="field">
+		        <label class="label">Email</label>
+		        <div class="control">
+		            <input class="input" id="email" type="email" placeholder="e.g alexsmith@gmail.com">
+		        </div>
+		    </div>
+		    <div class="field">
+		        <label class="label">Password</label>
+		        <div class="control">
+		            <input class="input" id="password" type="password" placeholder="*********">
+		        </div>
+		    </div>
+		    <div class="field">
+			    <div class="control">
+			        <button class="button is-primary" onclick="submitHandler()">Begin eLearning</button>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<br>
+	<h3 class="title is-3">Use For Testing</h3>
+
+
+	<div class="content columns">
+		<div id="column is-one-third">
+		  <table>
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th>Password</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>jessica@gmail.com</td>
+        <td>Service_2016</td>
+      </tr>
+      <tr>
+        <td>nina@p-didakt.com</td>
+        <td>Service_2016</td>
+      </tr>
+      <tr>
+        <td>ina@p-didakt.com</td>
+        <td>sdfasdf))e</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+	</div>
+</body>
+	<script>
+
+		const PROJECT = "CAD/CAM für Servicetechniker"
+   
+
+    function userIsInDatabase(users, userName, password) {
+
+        for (const user of users) {
+
+            if (user.userName === userName && user.password === password) {
+                handleAnswer(userName, password);
+                break;
+            }
+
+        }
+
+        console.log("sorry, not in database!!")
+    }
+
+    function handleAnswer(userName, password) {
+
+        const stringifiedData = buildJsonObject(userName, password, PROJECT);
+        const encoded = btoa(stringifiedData);
+        localStorage["userName"] = userName;
+        localSTorage["training"] = training;
+        console.log("userName and training added to localStorage")
+        redirectToSite(encoded);
+
+    }
+
+
+
+    function buildJsonObject(userName, password, training) {
+
+        return JSON.stringify({ userName, password, training })
+
+    }
+
+    function redirectToSite(encoded) {
+
+        location.href = "./course/index.html?" + encoded;
+    }
+
+
+
+    function submitHandler() {
+     
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        const form = {
+            "email" : email,
+            "password" : password
+        }
+
+        fetch("/course_2", {
+            method:'POST',
+            body:JSON.stringify(form),
+            headers:{
+                "Content-Type": "application/json"
+            }
+        }).then((res)=>{
+            if(res.status===200) {
+            	localStorage["userName"] = email;
+            	window.location = "course_2/course"
+            } 
+            else console.log("sorry, not allowed")
+        })  
+    }
+	</script>
+	
+
+</html>

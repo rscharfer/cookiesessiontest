@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>LRS Config</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.2/css/bulma.min.css">
+
+</head>
+
+<body class="section">
+    <h3 class="title is-1">LRS Config</h3>
+    <br>
+    <br>
+	<div id="columns">
+		<div class="column is-one-third">
+		    <div class="field">
+		        <label class="label">LRS Endpoint</label>
+		        <div class="control">
+		            <input class="input" id="endpoint" placeholder="http://myendpoint.com">
+		        </div>
+		    </div>
+		    <div class="field">
+		        <label class="label">LRS Key</label>
+		        <div class="control">
+		            <input class="input" id="lrskey" type="text" placeholder="rscharfer">
+		        </div>
+		    </div>
+             <div class="field">
+                <label class="label">LRS Password</label>
+                <div class="control">
+                    <input class="input" id="lrspass" type="password" placeholder="********">
+                </div>
+            </div>
+		    <div class="field">
+			    <div class="control">
+			        <button class="button is-primary" onclick="configLRS()">Set LRS Config</button>
+			    </div>
+			</div>
+		</div>
+	</div>
+    <script>
+    	function configLRS(){
+
+            require('fs').writeFileSync('./config.json', JSON.stringify({"endpoint":"123.123.123"}))
+		}
+
+    </script>
+</body>
+
+
+    
+</html>
