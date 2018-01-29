@@ -48,7 +48,7 @@ app.use(function(req, res, next){
 		
 		res.locals.email = req.body["email"];
   		res.locals.password = req.body["password"];
-  		console.log("locals email",res.locals.email)
+  		
 
   	}
 	next();
@@ -129,7 +129,7 @@ app.get('/admin/lrsconfig', (req, res) => res.sendFile(path.join(__dirname,"admi
 app.post('*', isAuthenticated, (req,res) => {
 
 	req.session.name = "User Name";
-	
+	console.log("where is the cookie?")
 	res.end()
 })
 
